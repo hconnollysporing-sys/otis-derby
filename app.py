@@ -1,25 +1,29 @@
 from flask import Flask, render_template, request, jsonify
-import json
 import os
+import psycopg2
+from psycopg2.extras import RealDictCursor
 
 app = Flask(__name__)
 
-# On Railway, set DATA_DIR=/data (persistent volume). Locally, uses current directory.
-DATA_DIR = os.environ.get("DATA_DIR", ".")
-DATA_FILE = os.path.join(DATA_DIR, "guesses.json")
-os.makedirs(DATA_DIR, exist_ok=True)
+DATABASE_URL = os.environ.get("DATABASE_URL")
 
 
-def load_guesses():
-    if not os.path.exists(DATA_FILE):
-        return []
-    with open(DATA_FILE, "r") as f:
-        return json.load(f)
+def get_conn():
+    return psycopg2.connect(DATABASE_URL)
 
 
-def save_guesses(guesses):
-    with open(DATA_FILE, "w") as f:
-        json.dump(guesses, f, indent=2)
+def init_db():
+    conn = get_conn()
+    with conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS guesses (
+                    id SERIAL,
+                    name TEXT PRIMARY KEY,
+                    guess TEXT NOT NULL
+                )
+            """)
+    conn.close()
 
 
 @app.route("/")
@@ -35,27 +39,41 @@ def add_guess():
     if not name or guess not in ("boy", "girl"):
         return jsonify({"error": "Invalid input"}), 400
 
-    guesses = load_guesses()
-    idx = next((i for i, g in enumerate(guesses) if g["name"].lower() == name.lower()), -1)
-    entry = {"name": name, "guess": guess}
-    if idx >= 0:
-        guesses[idx] = entry
-    else:
-        guesses.append(entry)
-    save_guesses(guesses)
+    conn = get_conn()
+    with conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                INSERT INTO guesses (name, guess) VALUES (%s, %s)
+                ON CONFLICT (name) DO UPDATE SET guess = EXCLUDED.guess
+            """, (name, guess))
+    conn.close()
     return jsonify({"ok": True})
 
 
 @app.route("/api/guesses")
 def get_guesses():
-    return jsonify(load_guesses())
+    conn = get_conn()
+    with conn.cursor(cursor_factory=RealDictCursor) as cur:
+        cur.execute("SELECT name, guess FROM guesses ORDER BY id")
+        rows = cur.fetchall()
+    conn.close()
+    return jsonify([dict(r) for r in rows])
 
 
 @app.route("/api/reset", methods=["POST"])
 def reset():
-    save_guesses([])
+    conn = get_conn()
+    with conn:
+        with conn.cursor() as cur:
+            cur.execute("DELETE FROM guesses")
+    conn.close()
     return jsonify({"ok": True})
 
 
 if __name__ == "__main__":
+    init_db()
     app.run(debug=True, port=5050)
+
+# Create table on startup (safe to run every time — IF NOT EXISTS)
+if DATABASE_URL:
+    init_db()
