@@ -446,41 +446,44 @@
 
     /* ── Reveal Results ── */
     .reveal-results {
-      text-align: left;
       margin-top: 1.25rem;
       padding-top: 1.1rem;
       border-top: 1px solid rgba(201,167,102,0.35);
     }
 
-    .reveal-results-title {
-      font-family: 'Bodoni Moda', serif;
-      font-size: 0.72rem;
-      letter-spacing: 0.25em;
-      text-transform: uppercase;
-      color: var(--gold-dark);
-      text-align: center;
-      margin-bottom: 0.85rem;
+    .results-cols {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
     }
 
-    .guess-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0.45rem 0;
-      border-bottom: 1px dashed rgba(201,167,102,0.2);
+    .results-col { text-align: center; }
+
+    .results-col-header {
+      font-family: 'Bodoni Moda', serif;
+      font-size: 0.88rem;
+      letter-spacing: 0.1em;
+      margin-bottom: 0.6rem;
+      display: block;
+    }
+    .results-col-header.boy  { color: var(--blue-text); }
+    .results-col-header.girl { color: var(--pink-text); }
+
+    .results-name {
       font-family: 'Cormorant Garamond', serif;
       font-size: 1rem;
+      padding: 0.2rem 0;
+      color: var(--text);
     }
-    .guess-row:last-child { border-bottom: none; }
+    .results-name.winner { font-weight: bold; color: #2e7d32; }
+    .results-name.loser  { color: #bbb; }
 
-    .guess-name  { color: var(--text); }
-    .guess-pick  { font-style: italic; }
-    .guess-pick.boy  { color: var(--blue-text); }
-    .guess-pick.girl { color: var(--pink-text); }
-    .guess-result { font-size: 0.82rem; font-style: italic; color: #7a5c4a; }
-
-    .guess-row.winner .guess-name { font-weight: bold; color: #2e7d32; }
-    .guess-row.loser  .guess-name { color: #aaa; }
+    .results-empty {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      color: #ccc;
+      font-size: 0.95rem;
+    }
 
     .btn-again {
       margin-top: 1.75rem;
@@ -761,15 +764,29 @@
   function renderRevealResults(guesses) {
     const el = document.getElementById('reveal-results');
     if (!guesses.length) { el.innerHTML = ''; return; }
-    el.innerHTML = '<p class="reveal-results-title">The Starting Field</p>' +
-      guesses.map(function(g) {
-        const won = g.guess === ACTUAL_RESULT;
-        return '<div class="guess-row ' + (won ? 'winner' : 'loser') + '">' +
-          '<span class="guess-name">' + g.name + '</span>' +
-          '<span class="guess-pick ' + g.guess + '">' + (g.guess === 'boy' ? 'Boy' : 'Girl') + '</span>' +
-          '<span class="guess-result">' + (won ? 'In the Money' : 'Out of the Money') + '</span>' +
-          '</div>';
+
+    const boys  = guesses.filter(function(g) { return g.guess === 'boy';  });
+    const girls = guesses.filter(function(g) { return g.guess === 'girl'; });
+
+    function nameList(names, side) {
+      if (!names.length) return '<p class="results-empty">&mdash;</p>';
+      return names.map(function(g) {
+        const cls = g.guess === ACTUAL_RESULT ? 'winner' : 'loser';
+        return '<p class="results-name ' + cls + '">' + g.name + '</p>';
       }).join('');
+    }
+
+    el.innerHTML =
+      '<div class="results-cols">' +
+        '<div class="results-col">' +
+          '<span class="results-col-header boy">Boy</span>' +
+          nameList(boys) +
+        '</div>' +
+        '<div class="results-col">' +
+          '<span class="results-col-header girl">Girl</span>' +
+          nameList(girls) +
+        '</div>' +
+      '</div>';
   }
 
   let wager = null;
