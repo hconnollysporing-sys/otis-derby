@@ -812,7 +812,11 @@
     if (!name || !wager) return;
 
     // Save guess to server before starting
-    await saveGuess(name, wager);
+    try {
+      await saveGuess(name, wager);
+    } catch (e) {
+      console.error('Could not save guess:', e);
+    }
     racing = true;
 
     document.getElementById('btn-race').disabled = true;
@@ -884,12 +888,17 @@
     document.getElementById('reveal-emoji').textContent =
       ACTUAL_RESULT === 'girl' ? '\uD83C\uDF38 \uD83C\uDFC7 \u2728' : '\uD83D\uDC99 \uD83C\uDFC7 \u2728';
 
-    const guesses = await loadGuesses();
-    renderChart(guesses);
-    renderRevealResults(guesses);
-
+    // Always show the overlay — load guesses best-effort
     document.getElementById('overlay').classList.add('show');
     launchConfetti();
+
+    try {
+      const guesses = await loadGuesses();
+      renderChart(guesses);
+      renderRevealResults(guesses);
+    } catch (e) {
+      console.error('Could not load guesses:', e);
+    }
   }
 
   function launchConfetti() {
