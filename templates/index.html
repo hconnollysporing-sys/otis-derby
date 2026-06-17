@@ -374,7 +374,17 @@
     .reveal-word.boy  { color: #1a6eae; }
     .reveal-word.girl { color: #ae1a3c; }
 
-    .reveal-emoji { font-size: 2rem; margin-bottom: 1.25rem; }
+    .reveal-emoji { font-size: 2rem; margin-bottom: 0.85rem; }
+
+    .reveal-personal {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 1.05rem;
+      letter-spacing: 0.04em;
+      margin-bottom: 1.1rem;
+    }
+    .reveal-personal.winner { color: #2e7d32; }
+    .reveal-personal.loser  { color: #a07840; }
 
     /* ── Results Chart ── */
     .guess-chart {
@@ -662,6 +672,7 @@
     <p class="reveal-its">It&#8217;s a</p>
     <div class="reveal-word" id="reveal-word"></div>
     <div class="reveal-emoji" id="reveal-emoji"></div>
+    <div class="reveal-personal" id="reveal-personal"></div>
     <div class="guess-chart" id="guess-chart"></div>
     <div class="reveal-results" id="reveal-results"></div>
     <button class="btn-again" onclick="resetRace()">Race Again</button>
@@ -887,6 +898,18 @@
 
     document.getElementById('reveal-emoji').textContent =
       ACTUAL_RESULT === 'girl' ? '\uD83C\uDF38 \uD83C\uDFC7 \u2728' : '\uD83D\uDC99 \uD83C\uDFC7 \u2728';
+
+    const personalEl = document.getElementById('reveal-personal');
+    if (wager === ACTUAL_RESULT) {
+      personalEl.textContent = 'Congratulations \u2014 you backed the right horse!';
+      personalEl.className = 'reveal-personal winner';
+    } else if (wager) {
+      personalEl.textContent = 'Better luck next time \u2014 you backed the wrong horse.';
+      personalEl.className = 'reveal-personal loser';
+    } else {
+      personalEl.textContent = '';
+      personalEl.className = 'reveal-personal';
+    }
 
     // Always show the overlay — load guesses best-effort
     document.getElementById('overlay').classList.add('show');
