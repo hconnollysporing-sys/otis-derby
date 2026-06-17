@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Otis Derby &middot; 2027</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,400;0,700;1,400;1,700&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --blue: #b3d4ea;
+      --blue-dark: #7ab0d4;
+      --blue-text: #1a4a6e;
+      --pink: #f5b5bd;
+      --pink-dark: #e07a8c;
+      --pink-text: #6e1a2c;
+      --cream: #fdf6ec;
+      --gold: #c9a766;
+      --gold-dark: #a07840;
+      --text: #2c1810;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(ellipse 60% 40% at 20% 10%, rgba(245,181,189,0.22) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 40% at 80% 90%, rgba(179,212,234,0.22) 0%, transparent 60%),
+        #fdf6ec;
+      font-family: 'Cormorant Garamond', serif;
+      color: var(--text);
+      padding: 3rem 1rem 2rem;
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      opacity: 0.025;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .container {
+      max-width: 680px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ── Header ── */
+    .eyebrow {
+      text-align: center;
+      font-size: 0.7rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--gold-dark);
+      margin-bottom: 1rem;
+    }
+
+    h1 {
+      font-family: 'Bodoni Moda', serif;
+      font-size: clamp(3rem, 10vw, 5rem);
+      font-weight: 700;
+      text-align: center;
+      line-height: 1.05;
+      color: var(--text);
+    }
+
+    h1 em { font-style: italic; font-weight: 400; }
+
+    .divider {
+      text-align: center;
+      color: var(--gold);
+      letter-spacing: 0.6em;
+      margin: 1.75rem 0;
+      font-size: 0.85rem;
+    }
+
+    /* ── Form Guide ── */
+    .form-guide {
+      background: #fff;
+      border: 1px solid var(--gold);
+      padding: 1.25rem 1.75rem;
+      margin-bottom: 1.25rem;
+      box-shadow: 0 4px 24px rgba(201,167,102,0.12);
+    }
+
+    .form-title {
+      font-family: 'Bodoni Moda', serif;
+      font-size: 0.78rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--gold-dark);
+      text-align: center;
+      padding-bottom: 0.85rem;
+      margin-bottom: 0.85rem;
+      border-bottom: 1px solid rgba(201,167,102,0.35);
+    }
+
+    .form-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem;
+    }
+
+    .form-table tr + tr td { border-top: 1px dashed rgba(201,167,102,0.3); }
+    .form-table td { padding: 0.5rem 0.5rem; vertical-align: middle; }
+
+    .form-num {
+      font-family: 'Bodoni Moda', serif;
+      font-style: italic;
+      font-size: 1.05rem;
+      color: var(--gold-dark);
+      width: 2.5rem;
+      text-align: center;
+    }
+
+    .form-name { color: var(--text); letter-spacing: 0.04em; }
+    .form-result { color: #7a5c4a; font-style: italic; text-align: center; }
+    .form-year { text-align: right; color: var(--gold-dark); font-size: 0.88rem; letter-spacing: 0.1em; }
+
+    .form-table tr.pending td { color: #aaa; font-style: italic; }
+    .form-table tr.pending .form-num { color: var(--gold); }
+
+    /* ── Track Card ── */
+    .track-card {
+      background: #fff;
+      border: 1px solid var(--gold);
+      padding: 1.5rem 1.5rem 1.25rem;
+      margin-bottom: 1.25rem;
+      box-shadow: 0 4px 24px rgba(201,167,102,0.12);
+    }
+
+    .track-label {
+      text-align: center;
+      font-family: 'Bodoni Moda', serif;
+      font-size: 0.85rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--gold-dark);
+      margin-bottom: 1rem;
+    }
+
+    .track-container {
+      position: relative;
+      width: 100%;
+      line-height: 0;
+    }
+
+    .track-svg {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 3px;
+    }
+
+    .horse {
+      position: absolute;
+      font-size: 2rem;
+      z-index: 4;
+      pointer-events: none;
+      line-height: 1;
+      will-change: left, top, transform;
+    }
+
+    .horse-boy  { filter: sepia(1) saturate(3) hue-rotate(185deg) brightness(1.05); }
+    .horse-girl { filter: sepia(1) saturate(3) hue-rotate(305deg) brightness(1.1);  }
+
+    /* ── Betting Card ── */
+    .bet-card {
+      background: #fff;
+      border: 1px solid var(--gold);
+      padding: 2rem 2rem 1.75rem;
+      margin-bottom: 1.25rem;
+      position: relative;
+      box-shadow: 0 4px 24px rgba(201,167,102,0.12);
+    }
+
+    .corner { position: absolute; color: var(--gold); font-size: 0.9rem; line-height: 1; }
+    .corner-tl { top: 8px;  left: 10px;  }
+    .corner-tr { top: 8px;  right: 10px; }
+    .corner-bl { bottom: 8px; left: 10px;  }
+    .corner-br { bottom: 8px; right: 10px; }
+
+    .bet-heading {
+      font-family: 'Bodoni Moda', serif;
+      font-size: 1.5rem;
+      text-align: center;
+      margin-bottom: 0.4rem;
+    }
+
+    .bet-sub {
+      text-align: center;
+      font-style: italic;
+      color: #7a5c4a;
+      font-size: 1rem;
+      margin-bottom: 1.75rem;
+    }
+
+    .name-row { margin-bottom: 1.5rem; }
+
+    .name-label {
+      display: block;
+      font-family: 'Bodoni Moda', serif;
+      font-size: 0.76rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--gold-dark);
+      margin-bottom: 0.5rem;
+    }
+
+    .name-input {
+      width: 100%;
+      padding: 0.7rem 1rem;
+      border: 1px solid var(--gold);
+      background: var(--cream);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .name-input:focus { border-color: var(--gold-dark); }
+    .name-input::placeholder { color: #c0a080; font-style: italic; }
+
+    .wager-btns {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .btn-wager {
+      padding: 1rem 0.5rem;
+      border: 2px solid;
+      font-family: 'Bodoni Moda', serif;
+      font-size: 1.05rem;
+      letter-spacing: 0.05em;
+      cursor: pointer;
+      position: relative;
+      top: 0;
+      transition: top 0.15s, box-shadow 0.15s;
+    }
+
+    .btn-wager-boy {
+      background: linear-gradient(135deg, #daeef8, #b3d4ea);
+      border-color: var(--blue-dark);
+      color: var(--blue-text);
+      box-shadow: 0 4px 0 var(--blue-dark);
+    }
+    .btn-wager-boy:hover { top: -2px; box-shadow: 0 6px 0 var(--blue-dark); }
+    .btn-wager-boy.selected { top: 2px; box-shadow: 0 2px 0 var(--blue-dark); outline: 3px solid var(--gold); outline-offset: 2px; }
+
+    .btn-wager-girl {
+      background: linear-gradient(135deg, #fde8ec, #f5b5bd);
+      border-color: var(--pink-dark);
+      color: var(--pink-text);
+      box-shadow: 0 4px 0 var(--pink-dark);
+    }
+    .btn-wager-girl:hover { top: -2px; box-shadow: 0 6px 0 var(--pink-dark); }
+    .btn-wager-girl.selected { top: 2px; box-shadow: 0 2px 0 var(--pink-dark); outline: 3px solid var(--gold); outline-offset: 2px; }
+
+    .odds {
+      display: block;
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 0.8rem;
+      font-weight: 300;
+      letter-spacing: 0.05em;
+      opacity: 0.7;
+      margin-top: 0.2rem;
+    }
+
+    /* ── Race Button ── */
+    .btn-race {
+      display: block;
+      width: 100%;
+      padding: 1.25rem 1rem;
+      background: linear-gradient(135deg, #f0e2c0, #e4cc96);
+      border: 2px solid var(--gold);
+      font-family: 'Bodoni Moda', serif;
+      font-size: 1.25rem;
+      letter-spacing: 0.1em;
+      color: var(--text);
+      cursor: pointer;
+      transition: box-shadow 0.3s;
+    }
+    .btn-race:hover { box-shadow: 0 0 24px rgba(201,167,102,0.55); }
+    .btn-race:disabled { opacity: 0.45; cursor: not-allowed; }
+
+    /* ── Race Modal ── */
+    .race-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(44, 24, 16, 0.88);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 90;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.5s ease;
+    }
+    .race-modal.show { opacity: 1; pointer-events: all; }
+
+    .race-modal-inner {
+      background: #fff;
+      border: 2px solid var(--gold);
+      padding: 1.75rem 1.75rem 1.5rem;
+      max-width: 660px;
+      width: 95%;
+      box-shadow: 0 12px 60px rgba(0,0,0,0.5);
+    }
+
+    .race-modal-label {
+      font-family: 'Bodoni Moda', serif;
+      text-align: center;
+      font-size: 0.78rem;
+      letter-spacing: 0.38em;
+      text-transform: uppercase;
+      color: var(--gold-dark);
+      margin-bottom: 1rem;
+    }
+
+    /* ── Reveal Overlay ── */
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(253,246,236,0.9);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.6s ease;
+      overflow-y: auto;
+      padding: 2rem 1rem;
+    }
+    .overlay.show { opacity: 1; pointer-events: all; }
+
+    .reveal-box {
+      background: #fff;
+      border: 2px solid var(--gold);
+      padding: 3rem 2.5rem 2.5rem;
+      text-align: center;
+      max-width: 480px;
+      width: 90%;
+      position: relative;
+      box-shadow: 0 8px 40px rgba(201,167,102,0.2);
+    }
+
+    .reveal-its {
+      font-style: italic;
+      font-size: 1.2rem;
+      letter-spacing: 0.15em;
+      color: #7a5c4a;
+      margin-bottom: 0.5rem;
+    }
+
+    .reveal-word {
+      font-family: 'Bodoni Moda', serif;
+      font-size: 4.5rem;
+      font-weight: 700;
+      line-height: 1;
+      margin-bottom: 0.75rem;
+    }
+    .reveal-word.boy  { color: #1a6eae; }
+    .reveal-word.girl { color: #ae1a3c; }
+
+    .reveal-emoji { font-size: 2rem; margin-bottom: 1.25rem; }
+
+    /* ── Results Chart ── */
+    .guess-chart {
+      margin-top: 1.25rem;
+      padding-top: 1.1rem;
+      border-top: 1px solid rgba(201,167,102,0.35);
+    }
+
+    .chart-title {
+      font-family: 'Bodoni Moda', serif;
+      font-size: 0.72rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--gold-dark);
+      margin-bottom: 1rem;
+    }
+
+    .chart-bars {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+    }
+
+    .chart-bar-group { text-align: center; }
+
+    .chart-bar-label {
+      font-family: 'Bodoni Moda', serif;
+      font-size: 0.88rem;
+      letter-spacing: 0.1em;
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+    .chart-bar-label.boy  { color: var(--blue-text); }
+    .chart-bar-label.girl { color: var(--pink-text); }
+
+    .chart-bar-track {
+      background: #f5ede0;
+      border: 1px solid rgba(201,167,102,0.4);
+      height: 80px;
+      display: flex;
+      align-items: flex-end;
+      overflow: hidden;
+    }
+
+    .chart-bar-fill {
+      width: 100%;
+      height: 0%;
+      transition: height 1s ease 0.3s;
+    }
+    .chart-bar-fill.boy  { background: linear-gradient(to top, var(--blue-dark), var(--blue)); }
+    .chart-bar-fill.girl { background: linear-gradient(to top, var(--pink-dark), var(--pink)); }
+
+    .chart-bar-pct {
+      font-family: 'Bodoni Moda', serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      display: block;
+      margin-top: 0.4rem;
+    }
+    .chart-bar-pct.boy  { color: var(--blue-text); }
+    .chart-bar-pct.girl { color: var(--pink-text); }
+
+    .chart-bar-count {
+      font-size: 0.8rem;
+      font-style: italic;
+      color: #7a5c4a;
+      display: block;
+    }
+
+    /* ── Reveal Results ── */
+    .reveal-results {
+      text-align: left;
+      margin-top: 1.25rem;
+      padding-top: 1.1rem;
+      border-top: 1px solid rgba(201,167,102,0.35);
+    }
+
+    .reveal-results-title {
+      font-family: 'Bodoni Moda', serif;
+      font-size: 0.72rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--gold-dark);
+      text-align: center;
+      margin-bottom: 0.85rem;
+    }
+
+    .guess-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.45rem 0;
+      border-bottom: 1px dashed rgba(201,167,102,0.2);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem;
+    }
+    .guess-row:last-child { border-bottom: none; }
+
+    .guess-name  { color: var(--text); }
+    .guess-pick  { font-style: italic; }
+    .guess-pick.boy  { color: var(--blue-text); }
+    .guess-pick.girl { color: var(--pink-text); }
+    .guess-result { font-size: 0.82rem; font-style: italic; color: #7a5c4a; }
+
+    .guess-row.winner .guess-name { font-weight: bold; color: #2e7d32; }
+    .guess-row.loser  .guess-name { color: #aaa; }
+
+    .btn-again {
+      margin-top: 1.75rem;
+      padding: 0.75rem 2.25rem;
+      background: transparent;
+      border: 1px solid var(--gold);
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 1rem;
+      letter-spacing: 0.12em;
+      color: var(--gold-dark);
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+    }
+    .btn-again:hover { background: var(--gold); color: #fff; }
+
+    /* ── Confetti ── */
+    .confetti {
+      position: fixed;
+      top: -30px;
+      animation: fall linear forwards;
+      pointer-events: none;
+      z-index: 200;
+    }
+    @keyframes fall {
+      to { transform: translateY(110vh) rotate(540deg); opacity: 0; }
+    }
+
+    @media (max-width: 480px) {
+      .wager-btns { grid-template-columns: 1fr; }
+      h1 { font-size: 2.8rem; }
+      .horse { font-size: 2rem; }
+      .reveal-box { padding: 2.5rem 1.5rem 2rem; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+
+  <p class="eyebrow">Race No. II &middot; The Otis Series</p>
+  <h1>The Otis<br>Derby</h1>
+  <div class="divider">&#10022; &nbsp; &#10022; &nbsp; &#10022;</div>
+
+  <!-- Form Guide -->
+  <div class="form-guide">
+    <p class="form-title">The Otis Series &middot; Official Race Record</p>
+    <table class="form-table">
+      <tr>
+        <td class="form-num">I</td>
+        <td class="form-name">C.J. Otis</td>
+        <td class="form-result">First Place</td>
+        <td class="form-year">2025</td>
+      </tr>
+      <tr class="pending">
+        <td class="form-num">II</td>
+        <td class="form-name">T.B.D. Otis</td>
+        <td class="form-result">To Be Run</td>
+        <td class="form-year">2027</td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- Track (static preview) -->
+  <div class="track-card">
+    <p class="track-label">The Starting Gate</p>
+    <div class="track-container">
+      <svg viewBox="0 0 600 280" xmlns="http://www.w3.org/2000/svg" class="track-svg">
+        <defs>
+          <pattern id="checker" x="0" y="0" width="10" height="10" patternUnits="userSpaceOnUse">
+            <rect width="5" height="5" fill="#222"/>
+            <rect x="5" y="5" width="5" height="5" fill="#222"/>
+            <rect x="5" width="5" height="5" fill="#eee"/>
+            <rect y="5" width="5" height="5" fill="#eee"/>
+          </pattern>
+          <radialGradient id="dirt" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#d4b48a"/>
+            <stop offset="100%" stop-color="#b89060"/>
+          </radialGradient>
+          <radialGradient id="infield" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#4a8a50"/>
+            <stop offset="100%" stop-color="#356040"/>
+          </radialGradient>
+        </defs>
+        <ellipse cx="300" cy="140" rx="290" ry="128" fill="url(#dirt)"/>
+        <ellipse cx="300" cy="140" rx="290" ry="128" fill="none" stroke="#7a5525" stroke-width="6"/>
+        <ellipse cx="300" cy="140" rx="283" ry="121" fill="none" stroke="rgba(255,255,255,0.55)" stroke-width="2"/>
+        <ellipse cx="300" cy="140" rx="204" ry="74" fill="url(#infield)"/>
+        <ellipse cx="300" cy="140" rx="204" ry="74" fill="none" stroke="#7a5525" stroke-width="3"/>
+        <ellipse cx="300" cy="140" rx="209" ry="79" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/>
+        <rect x="506" y="126" width="84" height="28" fill="url(#checker)" opacity="0.85" rx="1"/>
+        <rect x="568" y="127" width="11" height="11" fill="#7ab0d4" opacity="0.9" rx="1"/>
+        <rect x="568" y="142" width="11" height="11" fill="#f08090" opacity="0.9" rx="1"/>
+      </svg>
+      <div class="horse horse-boy"  id="horse-boy">&#127943;</div>
+      <div class="horse horse-girl" id="horse-girl">&#127943;</div>
+    </div>
+  </div>
+
+  <!-- Betting -->
+  <div class="bet-card">
+    <span class="corner corner-tl">&#10022;</span>
+    <span class="corner corner-tr">&#10022;</span>
+    <span class="corner corner-bl">&#10022;</span>
+    <span class="corner corner-br">&#10022;</span>
+    <div class="name-row">
+      <label class="name-label" for="bettor-name">Your Name</label>
+      <input type="text" id="bettor-name" class="name-input" placeholder="Enter your name..." autocomplete="off" oninput="checkReady()"/>
+    </div>
+    <h2 class="bet-heading">Place Your Wager</h2>
+    <p class="bet-sub">Will C.J. have a little brother or sister?</p>
+    <div class="wager-btns">
+      <button class="btn-wager btn-wager-boy" id="btn-boy" onclick="selectWager('boy')">
+        Wager on Boy
+        <span class="odds">Morning Line: Evens</span>
+      </button>
+      <button class="btn-wager btn-wager-girl" id="btn-girl" onclick="selectWager('girl')">
+        Wager on Girl
+        <span class="odds">Morning Line: Evens</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Race button -->
+  <button class="btn-race" id="btn-race" disabled onclick="startRace()">
+    Sound the Bugle
+  </button>
+
+</div>
+
+<!-- Race Modal -->
+<div class="race-modal" id="race-modal">
+  <div class="race-modal-inner">
+    <p class="race-modal-label">And They&#8217;re Off!</p>
+    <div class="track-container">
+      <svg viewBox="0 0 600 280" xmlns="http://www.w3.org/2000/svg" class="track-svg">
+        <defs>
+          <pattern id="checker2" x="0" y="0" width="10" height="10" patternUnits="userSpaceOnUse">
+            <rect width="5" height="5" fill="#222"/>
+            <rect x="5" y="5" width="5" height="5" fill="#222"/>
+            <rect x="5" width="5" height="5" fill="#eee"/>
+            <rect y="5" width="5" height="5" fill="#eee"/>
+          </pattern>
+          <radialGradient id="dirt2" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#d4b48a"/>
+            <stop offset="100%" stop-color="#b89060"/>
+          </radialGradient>
+          <radialGradient id="infield2" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#4a8a50"/>
+            <stop offset="100%" stop-color="#356040"/>
+          </radialGradient>
+        </defs>
+        <ellipse cx="300" cy="140" rx="290" ry="128" fill="url(#dirt2)"/>
+        <ellipse cx="300" cy="140" rx="290" ry="128" fill="none" stroke="#7a5525" stroke-width="6"/>
+        <ellipse cx="300" cy="140" rx="283" ry="121" fill="none" stroke="rgba(255,255,255,0.55)" stroke-width="2"/>
+        <ellipse cx="300" cy="140" rx="204" ry="74" fill="url(#infield2)"/>
+        <ellipse cx="300" cy="140" rx="204" ry="74" fill="none" stroke="#7a5525" stroke-width="3"/>
+        <ellipse cx="300" cy="140" rx="209" ry="79" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/>
+        <rect x="506" y="126" width="84" height="28" fill="url(#checker2)" opacity="0.85" rx="1"/>
+        <rect x="568" y="127" width="11" height="11" fill="#7ab0d4" opacity="0.9" rx="1"/>
+        <rect x="568" y="142" width="11" height="11" fill="#f08090" opacity="0.9" rx="1"/>
+      </svg>
+      <div class="horse horse-boy"  id="modal-horse-boy">&#127943;</div>
+      <div class="horse horse-girl" id="modal-horse-girl">&#127943;</div>
+    </div>
+  </div>
+</div>
+
+<!-- Reveal Overlay -->
+<div class="overlay" id="overlay">
+  <div class="reveal-box">
+    <span class="corner corner-tl">&#10022;</span>
+    <span class="corner corner-tr">&#10022;</span>
+    <span class="corner corner-bl">&#10022;</span>
+    <span class="corner corner-br">&#10022;</span>
+    <p class="reveal-its">It&#8217;s a</p>
+    <div class="reveal-word" id="reveal-word"></div>
+    <div class="reveal-emoji" id="reveal-emoji"></div>
+    <div class="guess-chart" id="guess-chart"></div>
+    <div class="reveal-results" id="reveal-results"></div>
+    <button class="btn-again" onclick="resetRace()">Race Again</button>
+  </div>
+</div>
+
+<script>
+  const ACTUAL_RESULT = 'boy'; // change to 'girl' if needed
+
+  const SVG_W = 600, SVG_H = 280, CX = 300, CY = 140;
+  const BOY_RX  = 258, BOY_RY  = 108;
+  const GIRL_RX = 234, GIRL_RY = 90;
+
+  function setHorsePos(el, progress, rx, ry) {
+    const angle = -progress * 2 * Math.PI;
+    const x = CX + rx * Math.cos(angle);
+    const y = CY + ry * Math.sin(angle);
+    el.style.left = (x / SVG_W * 100) + '%';
+    el.style.top  = (y / SVG_H * 100) + '%';
+    const flip = Math.sin(angle) > 0 ? -1 : 1;
+    el.style.transform = 'translate(-50%, -50%) scaleX(' + flip + ')';
+  }
+
+  function playBugle() {
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContext) return;
+    const ctx = new AudioContext();
+    const notes = [
+      [392, 0.00, 0.18], [523, 0.20, 0.18], [659, 0.40, 0.18],
+      [784, 0.60, 0.35], [659, 0.97, 0.18], [784, 1.17, 0.45],
+      [659, 1.64, 0.18], [523, 1.84, 0.18], [659, 2.04, 0.45],
+      [523, 2.51, 0.18], [392, 2.71, 0.18], [523, 2.91, 0.65],
+    ];
+    notes.forEach(function([freq, start, dur]) {
+      const osc = ctx.createOscillator(), filter = ctx.createBiquadFilter(), gain = ctx.createGain();
+      osc.type = 'sawtooth'; osc.frequency.value = freq;
+      filter.type = 'lowpass'; filter.frequency.value = 1800;
+      osc.connect(filter); filter.connect(gain); gain.connect(ctx.destination);
+      const t = ctx.currentTime + start;
+      gain.gain.setValueAtTime(0, t);
+      gain.gain.linearRampToValueAtTime(0.22, t + 0.03);
+      gain.gain.setValueAtTime(0.22, t + dur - 0.06);
+      gain.gain.linearRampToValueAtTime(0, t + dur);
+      osc.start(t); osc.stop(t + dur + 0.01);
+    });
+  }
+
+  // ── API calls ──
+  async function saveGuess(name, guess) {
+    await fetch('/api/guess', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: name, guess: guess })
+    });
+  }
+
+  async function loadGuesses() {
+    const res = await fetch('/api/guesses');
+    return res.json();
+  }
+
+  async function clearGuesses() {
+    await fetch('/api/reset', { method: 'POST' });
+  }
+
+  // ── Reveal rendering ──
+  function renderChart(guesses) {
+    const total = guesses.length;
+    const boyCount  = guesses.filter(function(g) { return g.guess === 'boy';  }).length;
+    const girlCount = guesses.filter(function(g) { return g.guess === 'girl'; }).length;
+    const boyPct  = total ? Math.round(boyCount  / total * 100) : 0;
+    const girlPct = total ? Math.round(girlCount / total * 100) : 0;
+
+    const el = document.getElementById('guess-chart');
+    if (!total) { el.innerHTML = ''; return; }
+
+    el.innerHTML =
+      '<p class="chart-title">The Field&#8217;s Wagers</p>' +
+      '<div class="chart-bars">' +
+        '<div class="chart-bar-group">' +
+          '<span class="chart-bar-label boy">Boy</span>' +
+          '<div class="chart-bar-track"><div class="chart-bar-fill boy" id="bar-boy" style="height:0%"></div></div>' +
+          '<span class="chart-bar-pct boy">' + boyPct + '%</span>' +
+          '<span class="chart-bar-count">' + boyCount + ' of ' + total + '</span>' +
+        '</div>' +
+        '<div class="chart-bar-group">' +
+          '<span class="chart-bar-label girl">Girl</span>' +
+          '<div class="chart-bar-track"><div class="chart-bar-fill girl" id="bar-girl" style="height:0%"></div></div>' +
+          '<span class="chart-bar-pct girl">' + girlPct + '%</span>' +
+          '<span class="chart-bar-count">' + girlCount + ' of ' + total + '</span>' +
+        '</div>' +
+      '</div>';
+
+    setTimeout(function() {
+      document.getElementById('bar-boy').style.height  = boyPct  + '%';
+      document.getElementById('bar-girl').style.height = girlPct + '%';
+    }, 80);
+  }
+
+  function renderRevealResults(guesses) {
+    const el = document.getElementById('reveal-results');
+    if (!guesses.length) { el.innerHTML = ''; return; }
+    el.innerHTML = '<p class="reveal-results-title">The Starting Field</p>' +
+      guesses.map(function(g) {
+        const won = g.guess === ACTUAL_RESULT;
+        return '<div class="guess-row ' + (won ? 'winner' : 'loser') + '">' +
+          '<span class="guess-name">' + g.name + '</span>' +
+          '<span class="guess-pick ' + g.guess + '">' + (g.guess === 'boy' ? 'Boy' : 'Girl') + '</span>' +
+          '<span class="guess-result">' + (won ? 'In the Money' : 'Out of the Money') + '</span>' +
+          '</div>';
+      }).join('');
+  }
+
+  let wager = null;
+  let racing = false;
+  let animFrame = null;
+
+  function checkReady() {
+    const name = document.getElementById('bettor-name').value.trim();
+    document.getElementById('btn-race').disabled = !(name && wager);
+  }
+
+  function selectWager(choice) {
+    if (racing) return;
+    wager = choice;
+    document.getElementById('btn-boy').classList.toggle('selected',  choice === 'boy');
+    document.getElementById('btn-girl').classList.toggle('selected', choice === 'girl');
+    checkReady();
+  }
+
+  async function startRace() {
+    if (racing) return;
+    const name = document.getElementById('bettor-name').value.trim();
+    if (!name || !wager) return;
+
+    // Save guess to server before starting
+    await saveGuess(name, wager);
+    racing = true;
+
+    document.getElementById('btn-race').disabled = true;
+    playBugle();
+
+    const raceModal = document.getElementById('race-modal');
+    const horseBoy  = document.getElementById('modal-horse-boy');
+    const horseGirl = document.getElementById('modal-horse-girl');
+
+    setHorsePos(horseBoy,  0, BOY_RX,  BOY_RY);
+    setHorsePos(horseGirl, 0, GIRL_RX, GIRL_RY);
+    raceModal.classList.add('show');
+
+    // Dramatic keyframes: girl bolts out → boy claws back → girl re-takes lead → dead heat → boy wins
+    const KF = [
+      [0.00, 0.000, 0.000],
+      [0.10, 0.070, 0.115],
+      [0.22, 0.180, 0.272],
+      [0.34, 0.340, 0.348],
+      [0.44, 0.450, 0.490],
+      [0.55, 0.565, 0.556],
+      [0.64, 0.662, 0.660],
+      [0.75, 0.768, 0.722],
+      [0.87, 0.892, 0.818],
+      [1.00, 1.000, 0.950],
+    ];
+
+    function splineAt(t, col) {
+      const n = KF.length;
+      let i = n - 2;
+      for (let j = 0; j < n - 1; j++) { if (t <= KF[j+1][0]) { i = j; break; } }
+      const u  = (t - KF[i][0]) / (KF[i+1][0] - KF[i][0]);
+      const p0 = KF[Math.max(i-1, 0)][col], p1 = KF[i][col];
+      const p2 = KF[i+1][col], p3 = KF[Math.min(i+2, n-1)][col];
+      const u2 = u*u, u3 = u2*u;
+      return 0.5*(2*p1+(-p0+p2)*u+(2*p0-5*p1+4*p2-p3)*u2+(-p0+3*p1-3*p2+p3)*u3);
+    }
+
+    const DURATION = 10000;
+    const startTime = performance.now();
+    let prevGirlProg = 0;
+
+    function animate(now) {
+      const t = Math.min((now - startTime) / DURATION, 1);
+      const boyProg = Math.max(0, Math.min(1,    splineAt(t, 1)));
+      const girlRaw = Math.max(0, Math.min(0.96, splineAt(t, 2)));
+      prevGirlProg  = Math.max(prevGirlProg, girlRaw);
+      setHorsePos(horseBoy,  boyProg,      BOY_RX,  BOY_RY);
+      setHorsePos(horseGirl, prevGirlProg, GIRL_RX, GIRL_RY);
+
+      if (t < 1) {
+        animFrame = requestAnimationFrame(animate);
+      } else {
+        setTimeout(function() {
+          raceModal.classList.remove('show');
+          setTimeout(showReveal, 400);
+        }, 700);
+      }
+    }
+
+    animFrame = requestAnimationFrame(animate);
+  }
+
+  async function showReveal() {
+    const wordEl = document.getElementById('reveal-word');
+    wordEl.textContent = ACTUAL_RESULT.toUpperCase();
+    wordEl.className   = 'reveal-word ' + ACTUAL_RESULT;
+
+    document.getElementById('reveal-emoji').textContent =
+      ACTUAL_RESULT === 'girl' ? '\uD83C\uDF38 \uD83C\uDFC7 \u2728' : '\uD83D\uDC99 \uD83C\uDFC7 \u2728';
+
+    const guesses = await loadGuesses();
+    renderChart(guesses);
+    renderRevealResults(guesses);
+
+    document.getElementById('overlay').classList.add('show');
+    launchConfetti();
+  }
+
+  function launchConfetti() {
+    const pieces = ['\uD83C\uDFC7', '\uD83C\uDF39', '\uD83C\uDFC6', '\uD83E\uDD47', '\uD83C\uDF7E', '\uD83C\uDF8A', '\uD83C\uDFC5', '\u2728', '\uD83D\uDC9B', '\uD83D\uDC99'];
+    for (let i = 0; i < 80; i++) {
+      setTimeout(function() {
+        const el = document.createElement('span');
+        el.className = 'confetti';
+        el.textContent = pieces[Math.floor(Math.random() * pieces.length)];
+        el.style.left = (Math.random() * 100) + 'vw';
+        el.style.fontSize = (Math.random() * 18 + 10) + 'px';
+        el.style.animationDuration = (Math.random() * 2.5 + 2) + 's';
+        document.body.appendChild(el);
+        el.addEventListener('animationend', function() { el.remove(); });
+      }, Math.random() * 1400);
+    }
+  }
+
+  // Position preview horses at start gate on page load
+  setHorsePos(document.getElementById('horse-boy'),  0, BOY_RX,  BOY_RY);
+  setHorsePos(document.getElementById('horse-girl'), 0, GIRL_RX, GIRL_RY);
+
+  async function resetRace() {
+    if (animFrame) cancelAnimationFrame(animFrame);
+    wager  = null;
+    racing = false;
+
+    await clearGuesses();
+
+    document.getElementById('overlay').classList.remove('show');
+    document.getElementById('race-modal').classList.remove('show');
+    document.getElementById('btn-boy').classList.remove('selected');
+    document.getElementById('btn-girl').classList.remove('selected');
+    document.getElementById('btn-race').disabled = true;
+    document.getElementById('bettor-name').value = '';
+
+    setHorsePos(document.getElementById('horse-boy'),  0, BOY_RX,  BOY_RY);
+    setHorsePos(document.getElementById('horse-girl'), 0, GIRL_RX, GIRL_RY);
+    setHorsePos(document.getElementById('modal-horse-boy'),  0, BOY_RX,  BOY_RY);
+    setHorsePos(document.getElementById('modal-horse-girl'), 0, GIRL_RX, GIRL_RY);
+  }
+</script>
+
+</body>
+</html>
